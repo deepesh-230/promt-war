@@ -3,9 +3,25 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { motion } from 'framer-motion';
 import { Brain, Activity, Moon, Clock } from 'lucide-react';
 
+/**
+ * Safely parses a JSON string from localStorage.
+ * Returns the fallback value if the key is missing or the data is corrupt.
+ * @param {string} key - The localStorage key.
+ * @param {*} fallback - The value to return on failure.
+ * @returns {*} The parsed value or the fallback.
+ */
+const safeLocalStorageGet = (key, fallback) => {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
 const Dashboard = () => {
   const [data] = useState(() => {
-    const savedJournals = JSON.parse(localStorage.getItem('mindmate_journals') || '[]');
+    const savedJournals = safeLocalStorageGet('mindmate_journals', []);
     const mockTrends = [
       { date: 'Mon', score: 70 },
       { date: 'Tue', score: 75 },
@@ -27,10 +43,6 @@ const Dashboard = () => {
       insights: latestInsights
     };
   });
-  
-  const [loading] = useState(false);
-
-  if (loading) return <div className="text-center mt-20">Loading Dashboard...</div>;
 
   return (
     <div className="space-y-8">

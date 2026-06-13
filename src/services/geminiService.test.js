@@ -22,8 +22,9 @@ describe('Gemini Service', () => {
           content: { parts: [{ text: '```json\n{"sentiment":"Positive","stressLevel":"Low"}\n```' }] }
         }]
       };
-      
+
       globalThis.fetch.mockResolvedValueOnce({
+        ok: true,
         json: () => Promise.resolve(mockResponse)
       });
 
@@ -35,7 +36,7 @@ describe('Gemini Service', () => {
       globalThis.fetch.mockRejectedValueOnce(new Error("API Error"));
 
       const result = await analyzeJournalWithGemini("Great day");
-      expect(result.sentiment).toBe("Neutral"); // Mock fallback
+      expect(result.sentiment).toBe("Neutral");
       expect(result.summary).toContain("Mock summary");
     });
   });
@@ -47,8 +48,9 @@ describe('Gemini Service', () => {
           content: { parts: [{ text: "Here is your response." }] }
         }]
       };
-      
+
       globalThis.fetch.mockResolvedValueOnce({
+        ok: true,
         json: () => Promise.resolve(mockResponse)
       });
 

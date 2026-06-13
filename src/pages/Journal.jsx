@@ -7,9 +7,13 @@ import { analyzeJournalWithGemini } from '../services/geminiService';
 const Journal = () => {
   const [content, setContent] = useState('');
   const [journals, setJournals] = useState(() => {
-    const saved = localStorage.getItem('mindmate_journals');
-    if (saved) {
-      return JSON.parse(saved);
+    try {
+      const saved = localStorage.getItem('mindmate_journals');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {
+      // Ignore corrupt localStorage data
     }
     return [];
   });

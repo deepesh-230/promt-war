@@ -6,9 +6,13 @@ import { chatWithMentor } from '../services/geminiService';
 
 const Chat = () => {
   const [messages, setMessages] = useState(() => {
-    const saved = localStorage.getItem('mindmate_chat');
-    if (saved) {
-      return JSON.parse(saved);
+    try {
+      const saved = localStorage.getItem('mindmate_chat');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {
+      // Ignore corrupt localStorage data
     }
     return [{ role: 'model', content: "Hi! I'm your AI wellness mentor. How is your exam preparation going today?" }];
   });
