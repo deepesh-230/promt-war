@@ -1,4 +1,3 @@
-import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { LayoutDashboard, BookHeart, MessageSquare, Activity } from 'lucide-react';
 
@@ -13,7 +12,7 @@ const Layout = () => {
           </h1>
         </div>
         
-        <nav className="flex-1 px-4 space-y-2 mt-4">
+        <nav className="flex-1 px-4 space-y-2 mt-4" aria-label="Sidebar Navigation">
           <Link to="/" className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800 transition-colors">
             <LayoutDashboard size={20} /> Dashboard
           </Link>

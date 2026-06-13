@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
+import DOMPurify from 'dompurify';
 import { motion } from 'framer-motion';
 import { Send, AlertTriangle } from 'lucide-react';
 import { analyzeJournalWithGemini } from '../services/geminiService';
 
 const Journal = () => {
   const [content, setContent] = useState('');
-  const [journals, setJournals] = useState([]);
-  const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
+  const [journals, setJournals] = useState(() => {
     const saved = localStorage.getItem('mindmate_journals');
     if (saved) {
-      setJournals(JSON.parse(saved));
+      return JSON.parse(saved);
     }
-  }, []);
+    return [];
+  });
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,6 +67,7 @@ const Journal = () => {
           />
           <button 
             type="submit"
+            aria-label="Submit Journal Entry"
             disabled={submitting}
             className="absolute bottom-4 right-4 bg-primary hover:bg-green-600 text-white p-3 rounded-xl transition-colors disabled:opacity-50"
           >
@@ -85,7 +86,10 @@ const Journal = () => {
             className="bg-secondary p-6 rounded-2xl border border-slate-800 space-y-4"
           >
             <div className="flex justify-between items-start">
-              <p className="text-slate-300 flex-1 whitespace-pre-wrap">{journal.content}</p>
+              <p 
+                className="text-slate-300 flex-1 whitespace-pre-wrap"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(journal.content) }}
+              />
               <span className="text-xs text-slate-500 ml-4">
                 {new Date(journal.createdAt).toLocaleDateString()}
               </span>

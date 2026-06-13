@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import Activities from './Activities';
@@ -57,6 +56,10 @@ describe('Activities Page', () => {
       const startBtn = screen.getByText('Start Guided Breathing');
       
       fireEvent.click(startBtn);
+      
+      act(() => {
+        vi.advanceTimersByTime(1);
+      });
       
       expect(screen.getByText('Stop')).toBeInTheDocument();
       expect(screen.getByText('Breathe In...')).toBeInTheDocument();

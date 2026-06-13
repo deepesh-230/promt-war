@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Pause, RotateCcw, Wind } from 'lucide-react';
 
@@ -14,15 +14,17 @@ const PomodoroTimer = () => {
         setTimeLeft(time => time - 1);
       }, 1000);
     } else if (timeLeft === 0) {
-      setIsActive(false);
-      // Automatically switch modes on completion
-      if (mode === 'focus') {
-        setMode('break');
-        setTimeLeft(5 * 60);
-      } else {
-        setMode('focus');
-        setTimeLeft(25 * 60);
-      }
+      setTimeout(() => {
+        setIsActive(false);
+        // Automatically switch modes on completion
+        if (mode === 'focus') {
+          setMode('break');
+          setTimeLeft(5 * 60);
+        } else {
+          setMode('focus');
+          setTimeLeft(25 * 60);
+        }
+      }, 0);
     }
     return () => clearInterval(interval);
   }, [isActive, timeLeft, mode]);
@@ -69,12 +71,14 @@ const PomodoroTimer = () => {
       <div className="flex gap-4">
         <button 
           onClick={toggleTimer}
+          aria-label={isActive ? "Pause Timer" : "Start Timer"}
           className="bg-slate-800 hover:bg-slate-700 text-white p-4 rounded-full transition-colors flex items-center justify-center w-16 h-16"
         >
           {isActive ? <Pause size={24} /> : <Play size={24} className="ml-1" />}
         </button>
         <button 
           onClick={resetTimer}
+          aria-label="Reset Timer"
           className="bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white p-4 rounded-full transition-colors flex items-center justify-center w-16 h-16"
         >
           <RotateCcw size={24} />
@@ -92,12 +96,14 @@ const BreathingExercise = () => {
     let timeoutId;
     if (isActive) {
       if (phase === 'idle' || phase === 'exhale') {
-        setPhase('inhale');
+        // Use timeout wrapper to avoid sync state setting in effect
+        timeoutId = setTimeout(() => {
+            setPhase('inhale');
+        }, 0);
+      } else if (phase === 'inhale') {
         timeoutId = setTimeout(() => setPhase('hold'), 4000); // Inhale 4s
       } else if (phase === 'hold') {
         timeoutId = setTimeout(() => setPhase('exhale'), 4000); // Hold 4s
-      } else if (phase === 'inhale') {
-        // Handled by the first if block
       }
     }
     return () => clearTimeout(timeoutId);

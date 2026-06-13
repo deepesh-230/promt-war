@@ -1,6 +1,5 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import Dashboard from './Dashboard';
 
 describe('Dashboard Component', () => {

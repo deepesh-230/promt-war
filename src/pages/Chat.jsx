@@ -1,22 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import DOMPurify from 'dompurify';
 import { motion } from 'framer-motion';
 import { Send, Bot, User } from 'lucide-react';
 import { chatWithMentor } from '../services/geminiService';
 
 const Chat = () => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem('mindmate_chat');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    return [{ role: 'model', content: "Hi! I'm your AI wellness mentor. How is your exam preparation going today?" }];
+  });
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const endOfMessagesRef = useRef(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('mindmate_chat');
-    if (saved) {
-      setMessages(JSON.parse(saved));
-    } else {
-      setMessages([{ role: 'model', content: "Hi! I'm your AI wellness mentor. How is your exam preparation going today?" }]);
-    }
-  }, []);
 
   useEffect(() => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -66,9 +64,10 @@ const Chat = () => {
                 {msg.role === 'user' ? <User size={20} /> : <Bot size={20} />}
               </div>
               <div className={`p-4 rounded-2xl max-w-[80%] ${msg.role === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-slate-800 text-slate-200 rounded-tl-none'}`}>
-                <p className="whitespace-pre-wrap leading-relaxed text-sm md:text-base">
-                  {msg.content}
-                </p>
+                <p 
+                  className="whitespace-pre-wrap leading-relaxed text-sm md:text-base"
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(msg.content) }}
+                />
               </div>
             </motion.div>
           ))}
@@ -99,6 +98,7 @@ const Chat = () => {
             />
             <button 
               type="submit"
+              aria-label="Send Message"
               disabled={loading || !input.trim()}
               className="bg-primary hover:bg-green-600 text-white px-6 py-3 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center"
             >

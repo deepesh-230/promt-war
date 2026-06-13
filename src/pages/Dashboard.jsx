@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
 import { Brain, Activity, Moon, Clock } from 'lucide-react';
 
 const Dashboard = () => {
-  const [data, setData] = useState({ wellnessScore: 82, trends: [], insights: [] });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
+  const [data] = useState(() => {
     const savedJournals = JSON.parse(localStorage.getItem('mindmate_journals') || '[]');
-    // Mock mood trends for simplicity since we removed the mood entry form for now
     const mockTrends = [
       { date: 'Mon', score: 70 },
       { date: 'Tue', score: 75 },
@@ -25,13 +21,14 @@ const Dashboard = () => {
       latestInsights = savedJournals[0].analysis.recommendations;
     }
 
-    setData({
+    return {
       wellnessScore: 82,
       trends: mockTrends,
       insights: latestInsights
-    });
-    setLoading(false);
-  }, []);
+    };
+  });
+  
+  const [loading] = useState(false);
 
   if (loading) return <div className="text-center mt-20">Loading Dashboard...</div>;
 
